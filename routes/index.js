@@ -4,7 +4,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Fadi Bitar' });
+  res.render('index', { title: 'JADE-bootstrap' });
 });
 
 module.exports = router;
