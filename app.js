@@ -6,10 +6,33 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var bootstrap = require('express-bootstrap-service');
 
+var anotherpage = require('./routes/anotherpage');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+var fs = require('fs');
+var url = require('url');
+
+function createServer(req, res) {
+    var path = url.parse(req.url).pathname;
+    var fsCallback = function(error, data) {
+        if(error) throw error;
+
+        res.writeHead(200);
+        res.write(data);
+        res.end();
+    }
+
+    switch(path) {
+        case '/anotherpage':
+            doc = fs.readFile(__dirname + '/views/anotherpage.jade', fsCallback);
+        break;
+        default:
+            doc = fs.readFile(__dirname + '/views/index.jade', fsCallback);
+        break;
+    }
+}
 
 app.use(bootstrap.serve);
 
@@ -26,6 +49,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
+app.use('/anotherpage', anotherpage);
 app.use('/users', users);
 
 // catch 404 and forward to error handler
@@ -42,11 +66,22 @@ app.get('/', function(req, res){
   res.render('/views/index.jade');
 });
 
+
+
+//GET newpage function
+app.get('/anotherpage', function(req, res){
+  res.render('/views/anotherpage.jade');
+});
+
+
+
 //POST function
 app.post('/', function(req,res){
   console.log("Receiving a POST request");
   res.send('Hello POST');
 });
+
+
 
 // error handlers
 
